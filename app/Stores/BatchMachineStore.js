@@ -24,7 +24,6 @@ class BatchMachineStore {
     let url = URL.LIST_ALL_BATCH_MACHINE;
     const apidata = {};
     let response = await callRemoteMethod(url, 'POST', data, apidata);
-    console.log('response of batch machine get all', response.data)
     this.showLoader = false;
     if (response) {
         this.listBatchMachine = response.data ? response.data.orderList : [];

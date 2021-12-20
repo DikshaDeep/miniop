@@ -21,7 +21,7 @@ import ImagePath from "../../../Utility/ImagePath";
 import CustomDropdownPicker from "../../../ReusableComponents/CustomDropdownPicker";
 import moment from "moment";
 
-@inject("MachineStore", "BatchStore", "UserStore")
+@inject("MachineStore", "BatchStore", "UserStore", "MachineStore")
 @observer
 export default class AddBatchId extends React.Component {
   constructor(props) {
@@ -30,15 +30,6 @@ export default class AddBatchId extends React.Component {
       machineName: "",
       day: "",
       date: "",
-      // modalVisible: false,
-      // batchidData: [
-      //   { id: "1", batchid: "BFG343" },
-      //   { id: "2", batchid: "SDFS34" },
-      //   { id: "3", batchid: "SDF32" },
-      //   { id: "4", batchid: "FSDF343" },
-      //   { id: "5", batchid: "334SDFDS" },
-      //   { id: "6", batchid: "SF343DF" },
-      // ],
       allBatch: [
         {
           label: "Day",
@@ -48,14 +39,7 @@ export default class AddBatchId extends React.Component {
         },
         { label: "Night", value: "N" },
       ],
-      allMachine: [
-        {
-          label: "Select Machine",
-          value: "1",
-          selected: true,
-          disabled: false,
-        }
-      ],
+      allMachine: [],
       selectedMachine: null,
       selectedUser: null
     };
@@ -64,10 +48,14 @@ export default class AddBatchId extends React.Component {
 
   async componentDidMount() {
     await this.props.MachineStore.list();
-    await this.props.BatchStore.list();
     if (this.props.route.params?.type == "ManagerBatchidListEdit") {
       const id = this.props.route.params.id;
       await this.props.BatchStore.details({batchId: id});
+    } else if (this.props.route.params?.type === "ListBatchidEdit") {
+      const id = this.props.route.params.data.id;
+      await this.props.BatchStore.details({batchId: id});
+      await this.props.MachineStore.details({machineId: this.props.route.params.data.machineName})
+      this.setState({date: this.props.route.params.data.date})
     }
   }
 
@@ -194,21 +182,30 @@ export default class AddBatchId extends React.Component {
       }
       response = await this.props.BatchStore.update({batch: data});
       this.props.navigation.navigate(SCREENS.MANAGERLABELLIST, {selectedData: response, type: 'ManagerBatchId', batchid: response._id})
+    } else if (this.props.route.params && this.props.route.params?.type == "ListBatchidEdit") {
+      const details = toJS(this.props.BatchStore.batchDetails);
+      delete details['__v'];
+      delete details['createdAt'];
+      data = {
+        ...details,
+        userId: this.state.selectedUser ? this.state.selectedUser._id : toJS(this.props.BatchStore.batchDetails.userId),
+        shift: this.state.day ? this.state.day : toJS(this.props.BatchStore.batchDetails.shift),
+        machineId: this.state.selectedMachine ? this.state.selectedMachine._id : toJS(this.props.BatchStore.batchDetails.machineId),
+        date: this.state.date || moment(toJS(this.props.BatchStore.batchDetails.date)).format('YYYY-MM-DD')
+      }
+      response = await this.props.BatchStore.update({batch: data});
+      this.onPressGotoAction()
     } else {
+
       response = await this.props.BatchStore.create({...data});
-      this.props.navigation.navigate(SCREENS.MANAGERLABELLIST, {selectedData: data, type: 'ManagerBatchId', batchid: response._id})
+      if (this.props.route.params && this.props.route.params?.type == "ManagerBatchidListAdd") {
+        this.props.navigation.navigate(SCREENS.MANAGERLABELLIST, {selectedData: data, type: 'ManagerBatchId', batchid: response._id})
+      } else {
+        this.onPressGotoAction()
+      }
     }
   };
-  // {
 
-  //   // if (this.state.date && !this.state.batchid) {
-  //   //   // this.setModalVisible(true);
-  //   // }
-
-  //   // if (this.state.machineName && this.state.date) {
-  //   //   this.props.navigation.navigate(SCREENS.LISTLABEL);
-  //   // }
-  // };
 
   changeMachine(item) {
     this.setState({selectedMachine: item});
@@ -218,22 +215,13 @@ export default class AddBatchId extends React.Component {
   }
 
   render() {
-    console.log('this.props.route.params.type', this.props.route.params?.type)
     if (this.props.route.params) {
       if (
         this.props.route.params.type == "ManagerBatchidListEdit" ||
         this.props.route.params.type == "ListBatchidEdit"
       ) {
-        // {
-        //   this.props.route.params.data.machinename;
-        // }
-        // {
-        //   this.props.route.params.data.date;
-        // }
-        // {
-        //   this.props.route.params.data.shift;
-        // }
-        const defaultMachine = toJS(this.props.BatchStore.batchDetails) && toJS(this.props.BatchStore.batchDetails.machineId) || null;
+        
+        const defaultMachine = toJS(this.props.BatchStore.batchDetails) && toJS(this.props.BatchStore.batchDetails.machineId) || toJS(this.props.MachineStore?.machineDetail?.machine);
         const defaultShift = toJS(this.props.BatchStore.batchDetails) && toJS(this.props.BatchStore.batchDetails.shift) || null;
         const defaultDate = toJS(this.props.BatchStore.batchDetails) && moment(toJS(this.props.BatchStore.batchDetails.date)).format('YYYY-MM-DD') || '';
         return (
@@ -246,6 +234,7 @@ export default class AddBatchId extends React.Component {
               <CustomDropdownPicker
                 items={toJS(this.props.MachineStore.machineList).length > 0 ? toJS(this.props.MachineStore.machineList) : []}
                 defaultValue={defaultMachine}
+                placeholder={'Select a machine'}
                 containerStyle={styles.selectshiftStyle}
                 onChangeItem={(item) => this.changeMachine(item)}
                 labelStyle={{

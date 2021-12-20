@@ -50,7 +50,8 @@ class MachineStore {
     const url = URL.FIND_ONE_MACHINE;
     let response = await callRemoteMethod(url, 'POST', data, true);
     if (response && response.data) {
-      console.log('details----', response.data)
+      response.data.machine.label = response.data.machine.name;
+      response.data.machine.value = response.data.machine._id;
       this.setDetail(response.data.machine);
     }
   };

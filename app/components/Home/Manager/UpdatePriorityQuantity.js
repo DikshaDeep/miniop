@@ -104,7 +104,7 @@ export default class UpdatePriorityQuantity extends React.Component {
             <TextInput
                 // keyboardType="numeric"
               style={styles.inputTextStyle}
-              value={this.state.priority.toString()}
+              value={this.state?.priority?.toString()}
               editable={false}
               placeholder={"Enter Priority"}
               onChangeText={(text) => this.onChangePriority(text)}

@@ -25,92 +25,6 @@ class TaskList extends Component {
     super(props);
     this.state = {
       removeAll: false,
-      ITEM_DATA: [
-        {
-          id: 1,
-          priority: "1",
-          orderNumber: "101",
-          customerName: "Stock",
-          productName: "Mango",
-          size: "12 * 5",
-          date: "10-07-2020",
-          taskid: "8",
-          quantity: "10kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 2,
-          priority: "2",
-          orderNumber: "102",
-          customerName: "Ram",
-          productName: "Orange",
-          size: "12 * 5",
-          date: "05-07-2020",
-          taskid: "16",
-          quantity: "20kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 3,
-          priority: "3",
-          orderNumber: "103",
-          customerName: "Raghav",
-          productName: "Mango",
-          size: "12 * 5",
-          date: "08-07-2020",
-          taskid: "20",
-          quantity: "320kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 4,
-          priority: "4",
-          orderNumber: "104",
-          customerName: "Sohan",
-          productName: "Orange",
-          size: "12 * 5",
-          date: "10-07-2020",
-          taskid: "12",
-          quantity: "30kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 5,
-          priority: "5",
-          orderNumber: "105",
-          customerName: "Rohan",
-          productName: "Grapes",
-          size: "12*5",
-          date: "12-07-2020",
-          taskid: "20",
-          quantity: "50kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 6,
-          priority: "6",
-          orderNumber: "106",
-          customerName: "stock",
-          productName: "Grapes",
-          size: "12*5",
-          date: "13-07-2020",
-          taskid: "10",
-          quantity: "40kg",
-          quantityReady: "10kg",
-        },
-        {
-          id: 7,
-          priority: "7",
-          orderNumber: "107",
-          customerName: "Verma",
-          productName: "Orange",
-          size: "12*5",
-          date: "10-07-2020",
-          taskid: "8",
-          quantity: "10kg",
-          quantityReady: "10kg",
-        },
-      ],
     };
   }
 
@@ -189,7 +103,7 @@ class TaskList extends Component {
   renderAllListView = ({ item, index }) => {
     const listOrderJob = toJS(this.props.OrderJobStore.listOrderJob) || [];
     const customerName = listOrderJob[0].customername;
-    const priority = listOrderJob[0].priority;
+    const priority = listOrderJob[0].priority || '1';
     const orderNumber = listOrderJob[0].orderno;
     const date = listOrderJob[0].date;
     return (

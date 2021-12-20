@@ -87,7 +87,6 @@ export default class CreateOrderJob extends React.Component {
                           "size" : this.state.size
                       }
     })
-    console.log('response OrderJobStore', response)
     this.props.navigation.goBack();
   };
 

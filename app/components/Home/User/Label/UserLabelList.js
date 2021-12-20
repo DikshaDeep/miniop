@@ -39,26 +39,6 @@ class UserLabelList extends Component {
           labelName: "gods",
           orderid: 102,
         },
-        {
-          id: 4,
-          labelName: "stock",
-          orderid: 101,
-        },
-        {
-          id: 5,
-          labelName: "pipe",
-          orderid: 106,
-        },
-        {
-          id: 6,
-          labelName: "albow",
-          orderid: 102,
-        },
-        {
-          id: 7,
-          labelName: "pineline",
-          orderid: 102,
-        },
       ],
     };
   }

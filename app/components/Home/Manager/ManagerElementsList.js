@@ -133,6 +133,7 @@ class ManagerElementsList extends Component {
   };
 
   renderAllListView = ({ item, index }) => {
+    console.log('item', item)
     if (this.props.route.params) {
       if (this.props.route.params.type == "Managerproductlist") {
         if (this.props.route.params.batchid) {
@@ -188,10 +189,10 @@ class ManagerElementsList extends Component {
           <View style={{ flex: 0.3 }}>
             <Text style={styles.headerNameStyle}>{"Box Number"}</Text>
           </View>
-          <View style={{ flex: 0.6 }}>
+          <View style={{ flex: 0.5 }}>
             <Text style={styles.itemNameStyle}>{"Box Weight"}</Text>
           </View>
-          <View style={{ flex: 0.1, marginRight: 18 }}>
+          <View style={{ flex: 0.2, marginRight: 18 }}>
             <Text style={styles.itemNameStyle}>{"Action"}</Text>
           </View>
         </View>

@@ -9,13 +9,14 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
+
 import ImagePath from "../../../Utility/ImagePath";
 import GlobalStyles from "../../../Utility/GlobalStyles";
 import { inject, observer } from "mobx-react";
 import { SCREENS } from "../../../Utility/Constants";
-import { observable } from "mobx";
+import { observable, toJS } from "mobx";
 
-@inject("LoginStore")
+@inject("LoginStore", "OrderStore")
 @observer
 class UserLabelList extends Component {
   @observable itemIndex = "";
@@ -44,23 +45,13 @@ class UserLabelList extends Component {
           labelName: "stock",
           orderid: 101,
         },
-        {
-          id: 5,
-          labelName: "pipe",
-          orderid: 106,
-        },
-        {
-          id: 6,
-          labelName: "albow",
-          orderid: 102,
-        },
-        {
-          id: 7,
-          labelName: "pineline",
-          orderid: 102,
-        },
       ],
     };
+  }
+
+  async componentDidMount() {
+    const {OrderStore} = this.props;
+    await OrderStore.list();
   }
 
   onPressGotoAction = () => {
@@ -117,15 +108,15 @@ class UserLabelList extends Component {
         onPress={() => this.onPressLabel(item.labelName)}
       >
         <View style={styles.mainView}>
-          <View style={{ flex: 0.6 }}>
-            <Text style={styles.labelNameStyle}>{item.labelName}</Text>
-          </View>
           <View style={{ flex: 0.4 }}>
-            <Text style={styles.labelNameStyle1}>{item.orderid}</Text>
+          <Text style={styles.cartNameStyle}>{item._id}</Text>
+          </View>
+          <View style={{ flex: 0.4, alignItems: 'center' }}>
+            <Text style={styles.labelNameStyle1}>{item.orderno}</Text>
           </View>
           <TouchableOpacity
-            style={{ marginLeft: 50, marginTop: 2 }}
-            onPress={() => this.GoToEdit(item.labelName, item.orderid, item.id)}
+            style={{ marginLeft: 10, flex: 0.1, marginTop: 2 }}
+            onPress={() => this.GoToEdit(item.customername, item.orderno, item._id)}
           >
             <Image
               resizeMode={"contain"}
@@ -133,7 +124,7 @@ class UserLabelList extends Component {
               source={ImagePath.EDIT_ICON}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginLeft: 20, marginTop: 2 }}>
+          <TouchableOpacity style={{ marginLeft: 10, flex: 0.1, marginTop: 2 }}>
             <Image
               resizeMode={"contain"}
               style={styles.back1}
@@ -145,7 +136,7 @@ class UserLabelList extends Component {
     );
   };
 
-  machinelistView = () => {
+  machinelistView = (ITEM_DATA) => {
     return (
       <View style={styles.itemListViewStyle}>
         <View style={styles.dateViewStyle1}>
@@ -163,9 +154,9 @@ class UserLabelList extends Component {
           contentContainerStyle={styles.listMain}
           bounces={false}
           showsVerticalScrollIndicator={false}
-          data={this.state.ITEM_DATA}
+          data={ITEM_DATA}
           renderItem={this.renderAllListView}
-          keyExtractor={(item, index) => item.name + index}
+          keyExtractor={(item, index) => item._id}
         />
       </View>
     );
@@ -187,10 +178,12 @@ class UserLabelList extends Component {
     //     </SafeAreaView>
     //   );
     // }
+    const {OrderStore} = this.props;
+    const orderList = toJS(OrderStore.orderList);
     return (
       <SafeAreaView style={styles.container}>
         {this.header()}
-        {this.machinelistView()}
+        {this.machinelistView(orderList)}
       </SafeAreaView>
     );
   }

@@ -26,28 +26,6 @@ export default class AddLabel extends React.Component {
       batchid: "",
       labelname: "",
       labelarray: [{ labelname: "" }],
-      allBatch: [
-        {
-          label: "SDFSDF342242",
-          value: "1",
-          selected: true,
-          disabled: false,
-        },
-        { label: "WEREWRSDF324324", value: "2" },
-        { label: "3242DSFFSDF", value: "3" },
-        { label: "SDF32423", value: "4" },
-      ],
-      allcustomer: [
-        {
-          label: "Choose Label",
-          value: "1",
-          selected: true,
-          disabled: false,
-        },
-        { label: "WEREWRSDF324324", value: "2" },
-        { label: "3242DSFFSDF", value: "3" },
-        { label: "SDF32423", value: "4" },
-      ],
     };
   }
 
@@ -191,12 +169,11 @@ export default class AddLabel extends React.Component {
         "machine": {
           "customername": item.name,
           orderno: orderno,
-          status: 'Dispatched'
+          status: 'Open'
         }                        
       };
       response = await this.props.BatchMachineStore.create(data);
-    }
-    if (this.props.route.params.type === "ManagerLabelListEdit") {
+    } else if (this.props.route.params.type === "ManagerLabelListEdit") {
       const details = toJS(this.props.BatchMachineStore.batchOrderDetails);
       const batchid = this.props.route.params.data.batchid;
       const id = details?.machineoutput._id;
@@ -215,6 +192,19 @@ export default class AddLabel extends React.Component {
         }                        
       }
       response = await this.props.BatchMachineStore.update(data);
+    } else {
+      const item = this.state.labelname;
+      const data = {
+        "batch":{
+            "_id": this.state.batchid
+          },
+        "machine":  {
+          "orderno": 1,
+          "customername": item.name,
+          "status": "Open"
+        }
+      }
+      response = await this.props.BatchMachineStore.create(data);
     }
     if (response) {
       this.props.navigation.navigate(SCREENS.LISTPRODUCT, {

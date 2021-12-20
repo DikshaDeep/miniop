@@ -30,8 +30,6 @@ class ProductStore {
   list = async () => {
     const url = URL.GET_ALL_PRODUCT;
     let response = await callRemoteMethod(url, 'GET', '', true);
-    console.log('response--------- response', response)
-
     if (response && response.data) {
       this.setProductList(response.data);
       return response.data;

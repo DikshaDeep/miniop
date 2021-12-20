@@ -8,13 +8,14 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { toJS } from 'mobx'
 import ImagePath from "../../../Utility/ImagePath";
 import GlobalStyles from "../../../Utility/GlobalStyles";
 import { inject, observer } from "mobx-react";
 import { SCREENS } from "../../../Utility/Constants";
 import { observable } from "mobx";
 
-@inject("LoginStore")
+@inject("LoginStore", "BatchStore")
 @observer
 class ListBatchid extends Component {
   @observable itemIndex = "";
@@ -23,58 +24,16 @@ class ListBatchid extends Component {
     super(props);
     this.state = {
       removeAll: false,
-      ITEM_DATA: [
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "1",
-          machineName: "GFDERT344343",
-          date: "10-07-2020",
-          shift: "Day",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "2",
-          machineName: "WER234242",
-          date: "11-07-2020",
-          shift: "Night",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "3",
-          machineName: "ASDFSD23424",
-          date: "09-07-2020",
-          shift: "Day",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "4",
-          machineName: "ASDFSD23424",
-          date: "09-07-2020",
-          shift: "Night",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "5",
-          machineName: "WER234242",
-          date: "11-07-2020",
-          shift: "Day",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "6",
-          machineName: "ASDFSD23424",
-          date: "09-07-2020",
-          shift: "Day",
-        },
-        {
-          logoImg: ImagePath.APP_LOGO,
-          id: "7",
-          machineName: "ASDFSD23424",
-          date: "09-07-2020",
-          shift: "Night",
-        },
-      ],
     };
+  }
+
+  componentDidMount() {
+    this.setState({loader: true})
+    this.getList();
+  }
+
+  async getList() {
+    await this.props.BatchStore.list()
   }
 
   onPressGotoAction = () => {
@@ -92,6 +51,13 @@ class ListBatchid extends Component {
       },
     });
   };
+
+  deleteOperation = async (item) => {
+    await this.props.BatchStore.delete({
+      "batchId": item._id
+    });
+  };
+
   header = () => {
     return (
       <View style={[styles.header, styles.shadow]}>
@@ -117,10 +83,11 @@ class ListBatchid extends Component {
       </View>
     );
   };
-  onPressBatch = (machinename) => {
+
+  onPressBatch = (id) => {
     this.props.navigation.navigate(SCREENS.LISTLABEL, {
       type: "ListBatchId",
-      batchid: machinename,
+      batchid: id,
     });
   };
 
@@ -132,12 +99,12 @@ class ListBatchid extends Component {
     return (
       <TouchableOpacity
         style={styles.card}
-        onPress={() => this.onPressBatch(item.machineName)}
+        onPress={() => this.onPressBatch(item._id)}
       >
         <View style={styles.mainView}>
           <View style={styles.imageView}>
             <View style={styles.textView}>
-              <Text style={styles.machineName}>{item.machineName}</Text>
+              <Text style={styles.machineName}>{item._id}</Text>
             </View>
           </View>
           <View style={styles.dateView}>
@@ -162,13 +129,13 @@ class ListBatchid extends Component {
             </View>
           </View>
           <TouchableOpacity
-            style={{ marginLeft: 45 }}
+            style={{ marginLeft: 10, flex: 0.1 }}
             onPress={() =>
               this.OnPressEditBatchid(
-                item.machineName,
+                item.machineId,
                 item.date,
                 item.shift,
-                item.id
+                item._id
               )
             }
           >
@@ -178,7 +145,10 @@ class ListBatchid extends Component {
               source={ImagePath.EDIT_ICON}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginLeft: 12, marginRight: 8 }}>
+          <TouchableOpacity style={{ marginLeft: 10, marginRight: 8, flex: 0.1 }} 
+            onPress={() =>
+              this.deleteOperation(item)
+            }>
             <Image
               resizeMode={"contain"}
               style={styles.back}
@@ -194,16 +164,16 @@ class ListBatchid extends Component {
     return (
       <View style={styles.itemListViewStyle}>
         <View style={styles.dateViewStyle1}>
-          <View style={{ flex: 0.3 }}>
+          <View style={{ flex: 0.4 }}>
             <Text style={styles.headerNameStyle}>{"Batch Id"}</Text>
           </View>
-          <View style={{ flex: 0.3 }}>
+          <View style={{ flex: 0.2 }}>
             <Text style={styles.itemNameStyle}>{"Date"}</Text>
           </View>
-          <View style={{ flex: 0.3 }}>
+          <View style={{ flex: 0.2 }}>
             <Text style={styles.itemNameStyle}>{"Shift"}</Text>
           </View>
-          <View style={{ flex: 0.1 }}>
+          <View style={{ flex: 0.2 }}>
             <Text style={styles.itemNameStyle}>{"Action"}</Text>
           </View>
         </View>
@@ -211,7 +181,7 @@ class ListBatchid extends Component {
           contentContainerStyle={styles.listMain}
           bounces={false}
           showsVerticalScrollIndicator={false}
-          data={this.state.ITEM_DATA}
+          data={toJS(this.props.BatchStore?.listBatch) || []}
           renderItem={this.renderAllListView}
           keyExtractor={(item, index) => item.name + index}
         />
@@ -312,8 +282,8 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colorCodes.black2,
   },
   imageView: {
-    flexDirection: "row",
     flex: 0.4,
+    flexDirection: "row",
     flexWrap: "wrap",
   },
   image: {
@@ -326,7 +296,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   shiftView: {
-    flex: 0.3,
+    flex: 0.2,
     alignItems: "flex-end",
   },
   textView: {

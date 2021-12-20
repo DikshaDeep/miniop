@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Button,
 } from "react-native";
+import { toJS } from 'mobx'
 import ImagePath from "../../../Utility/ImagePath";
 import GlobalStyles from "../../../Utility/GlobalStyles";
 import { inject, observer } from "mobx-react";
@@ -22,50 +23,11 @@ class ListLabel extends Component {
   @observable countItem = 2;
   constructor(props) {
     super(props);
-    this.state = {
-      ITEM_DATA: [
-        {
-          id: "1",
-          labelName: "stock",
-          orderid: 102,
-        },
-        {
-          id: "2",
-          labelName: "material",
-          orderid: 102,
-        },
-        {
-          id: "3",
-          labelName: "gods",
-          orderid: 102,
-        },
-        {
-          id: "4",
-          labelName: "stock",
-          orderid: 101,
-        },
-        {
-          id: "5",
-          labelName: "pipe",
-          orderid: 106,
-        },
-        {
-          id: "6",
-          labelName: "albow",
-          orderid: 102,
-        },
-        {
-          id: "7",
-          labelName: "pineline",
-          orderid: 102,
-        },
-      ],
-    };
   }
 
   async componentDidMount() {
     const {OrderStore, BatchMachineStore} = this.props;
-    if (this.props.route.params.type == "ManagerBatchId") {
+    if (this.props.route.params.type == "ManagerBatchId" || this.props.route.params.type == "ListBatchId") {
       const id = this.props.route.params.batchid
       await BatchMachineStore.list({ batch: { _id: id } });
     } else {
@@ -74,7 +36,7 @@ class ListLabel extends Component {
   }
 
   onPressGotoAction = () => {
-    this.props.navigation.navigate(SCREENS.ADDLABEL);
+    this.props.navigation.navigate(SCREENS.ADDLABEL, {batchid: this.props.route.params.batchid});
   };
 
   header = () => {
@@ -109,23 +71,12 @@ class ListLabel extends Component {
       labelname: labelName,
     });
   };
-  // OnPressEditLabel = (item) => {
-  //   console.log('item---on--edit', item)
-  //   const customername = toJS(this.props.BatchMachineStore.listBatchMachine)[0].userId;
-  //   this.props.navigation.navigate(SCREENS.ADDLABEL, {
-  //     type: "ListLabelEdit",
-  //     data: {
-  //       labelName: customername.substr(customername.length - 4),
-  //       orderid: item.orderno,
-  //       id: item._id,
-  //     },
-  //   });
-  // };
 
   GoToEdit = (item) => {
     this.props.navigation.navigate(SCREENS.ADDLABEL, {
       type: "ManagerLabelListEdit",
       data: {
+        batchid: this.props.route.params.batchid,
         customername: item.customername,
         orderid: item.orderno,
         id: item._id,
@@ -146,24 +97,22 @@ class ListLabel extends Component {
   };
 
   renderAllListView = ({ item, index }) => {
-    const customername = toJS(this.props.BatchMachineStore.listBatchMachine)[0].userId;
     return (
       <TouchableOpacity
         style={styles.card}
         onPress={() =>
           this.onPressLabel(item, this.props.route.params.batchid)
         }
-        // onPress={() => this.onPressLabel(item.labelName)}
       >
         <View style={styles.mainView}>
-          <View style={{ flex: 0.6 }}>
-            <Text style={styles.labelNameStyle}>{customername.substr(customername.length - 4)}</Text>
+          <View style={{ flex: 0.4 }}>
+            <Text style={styles.labelNameStyle}>{item.customername}</Text>
           </View>
           <View style={{ flex: 0.4 }}>
-            <Text style={styles.labelNameStyle1}>{item.orderno}</Text>
+            <Text style={styles.labelNameStyle1}>{item._id}</Text>
           </View>
           <TouchableOpacity
-            style={{ marginLeft: 50, marginTop: 2 }}
+            style={{ marginLeft: 10, marginTop: 2, flex: 0.1 }}
             
             onPress={() =>
               this.GoToEdit(item)
@@ -175,7 +124,7 @@ class ListLabel extends Component {
               source={ImagePath.EDIT_ICON}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginLeft: 20, marginTop: 2 }} onPress={() => this.deleteOperation(item)}>
+          <TouchableOpacity style={{ marginLeft: 10, marginTop: 2, flex: 0.1 }} onPress={() => this.deleteOperation(item)}>
             <Image
               resizeMode={"contain"}
               style={styles.back1}
@@ -188,7 +137,7 @@ class ListLabel extends Component {
   };
 
   machinelistView = () => {
-    const ITEM_DATA = this.props.route.params.type == "ManagerBatchId" ? toJS(this.props.BatchMachineStore.listBatchMachine)[0].orderdata : toJS(this.props.OrderStore.orderList);
+    const ITEM_DATA = (this.props.route.params.type == "ManagerBatchId" || this.props.route.params.type == "ListBatchId") ? toJS(this.props.BatchMachineStore?.listBatchMachine)[0]?.machineoutput : toJS(this.props.OrderStore.orderList);
     return (
       <View style={styles.itemListViewStyle}>
         <View style={styles.dateViewStyle1}>
@@ -216,6 +165,7 @@ class ListLabel extends Component {
 
   onServerCall = () => {};
   render() {
+    console.log('this.props.route.params', this.props.route.params)
     if (this.props.route.params) {
       if (this.props.route.params.type == "ListBatchId") {
         return (

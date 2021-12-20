@@ -104,6 +104,7 @@ class ManagerLabelList extends Component {
       data: {
         batchid: batchid,
         id: item._id,
+        customername: item.customername,
       },
     });
   };
@@ -256,7 +257,7 @@ class ManagerLabelList extends Component {
             {this.props.route.params.batchid}
           </Text>
         </View>
-        {toJS(this.props.BatchStore?.batchDetails)?.machineoutput.length > 0 && this.machinelistView()}
+        {toJS(this.props.BatchStore?.batchDetails)?.machineoutput?.length > 0 && this.machinelistView()}
       </SafeAreaView>
     );
   }

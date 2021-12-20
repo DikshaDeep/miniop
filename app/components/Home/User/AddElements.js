@@ -35,38 +35,25 @@ export default class AddElements extends React.Component {
       countInput: [{ inputShow: 1 }],
       boxNumberText: "",
       boxWeightText: "",
-      allLables: [
-        {
-          label: "Ram",
-          value: "1",
-          selected: true,
-          disabled: true,
-        },
-      ],
-      allProduct: [
-        {
-          label: "Mango",
-          value: "1",
-          selected: true,
-          disabled: true,
-        },
-      ],
     };
   }
 
   async componentDidMount() {
     const {ProductStore, UserStore, BatchMachineProductStore} = this.props;
     console.log('params-----', this.props.route.params);
-    // await ProductStore.list();
-    // await UserStore.list({page: 1})
-    if (this.props.route.params.type == "ManagerElementsListEdit") {
-      const {batchid, machineOutputId, productId} = this.props.route.params;
+    if (this.props.route.params.type == "ManagerElementsListAdd") {
+      const products = await ProductStore.list();
+      await UserStore.listUserApi({page: 1})
+      this.setState({
+        allProduct: products
+      })
 
+    }
+    if (this.props.route.params.type == "ManagerElementsListEdit") {
       const ITEM_DATA = toJS(this.props.BatchMachineProductBoxStore.listBatchMachineProductBox);
       this.setState({
         countInput: [...ITEM_DATA]
       })
-      console.log('element ', ITEM_DATA)
     
     } 
   }
@@ -186,7 +173,7 @@ export default class AddElements extends React.Component {
                 <TextInput
                   style={styles.inputTextStyle}
                   // value={{}}
-                  defaultValue={item.boxnumber.toString()}
+                  defaultValue={item?.boxnumber?.toString() || ''}
                   keyboardType={"numeric"}
                   placeholder={"Box Number"}
                   onChangeText={(text) =>
@@ -368,7 +355,8 @@ export default class AddElements extends React.Component {
           <View style={styles.selectLabelView}>
             <Text style={styles.selectheaderText}>{"Select Label Name"}</Text>
             <CustomDropdownPicker
-              items={this.state.allLables}
+              items={toJS(this.props.UserStore.listUserData)}
+              placeholder={'Select a label'}
               defaultNull
               containerStyle={styles.datepickerStyle}
               onChangeItem={(item) => this.changeIssue(item)}
@@ -380,7 +368,8 @@ export default class AddElements extends React.Component {
           <View style={styles.selectproductView}>
             <Text style={styles.selectheaderText}>{"Select Product Name"}</Text>
             <CustomDropdownPicker
-              items={this.state.allProduct}
+              items={toJS(this.props.ProductStore.productList)}
+              placeholder={'Select a product'}
               defaultNull
               containerStyle={styles.datepickerStyle}
               onChangeItem={(item) => this.changeIssue(item)}

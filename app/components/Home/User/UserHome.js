@@ -9,8 +9,8 @@ export default class UserHome extends React.Component {
     super(props);
   }
 
-  GoToCreateBatch = () => {
-    this.props.navigation.navigate(SCREENS.ADDBATCHID);
+  GoToListBatch = () => {
+    this.props.navigation.navigate(SCREENS.LISTBATCHID);
   };
   GoToLabelListId = () => {
     this.props.navigation.navigate(SCREENS.USERLABELLIST);
@@ -29,7 +29,7 @@ export default class UserHome extends React.Component {
           <View style={{ flex: 0.4 }}>
             <Button
               title="Manage Batchid"
-              onPress={() => this.GoToCreateBatch()}
+              onPress={() => this.GoToListBatch()}
             />
           </View>
           <View style={{ flex: 0.4 }}>

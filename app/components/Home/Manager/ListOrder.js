@@ -100,7 +100,7 @@ class ListOrder extends Component {
                 //values entered will be numeric
                 style={styles.itemNameStyle}
               >
-                {item.priority}
+                {item.priority || '1'}
               </Text>
             </View>
           </View>
