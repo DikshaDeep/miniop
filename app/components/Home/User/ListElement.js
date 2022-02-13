@@ -14,7 +14,7 @@ import { inject, observer } from "mobx-react";
 import { SCREENS } from "../../../Utility/Constants";
 import { observable } from "mobx";
 
-@inject("LoginStore")
+@inject("LoginStore", "BatchMachineProductBoxStore")
 @observer
 class ListElement extends Component {
   @observable itemIndex = "";
@@ -60,6 +60,14 @@ class ListElement extends Component {
         },
       ],
     };
+  }
+
+  componentDidMount() {
+    const { BatchMachineProductBoxStore } = this.props;
+    
+    const {batchid} = this.props.route.params;
+    console.log('')
+    // await BatchMachineProductBoxStore.list({ batch: { _id: batchid, machineoutput: {_id: machineOutputId, products: {_id: productId}} } });
   }
 
   onPressGotoAction = () => {
@@ -181,11 +189,11 @@ class ListElement extends Component {
         <View style={styles.batchidNameView}>
           <Text style={styles.batchidName}>
             {"Batch ID:   "}
-            {this.props.route.params.batchid}
+            {this.props.route.params?.batchid}
           </Text>
           <Text style={styles.batchidName}>
             {"Label Name:   "}
-            {this.props.route.params.labelname}
+            {this.props.route.params?.labelname.customername}
           </Text>
           <Text style={styles.batchidName}>
             {"Product:   "}
@@ -197,6 +205,7 @@ class ListElement extends Component {
       </SafeAreaView>
     );
     }
+
   }
 }
 const styles = StyleSheet.create({

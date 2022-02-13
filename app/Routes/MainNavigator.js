@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet } from "react-native";
+import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { SCREENS, ASYNC_KEYS } from "../Utility/Constants";
 
 // ASYNC UTIL
 import { getAsync } from "../Utility/AsyncStorageUtil";
@@ -20,15 +18,9 @@ const setAsyncToken = async setToken => {
   TOKEN && setToken(TOKEN);
 };
 
-// const setAsyncRole = async setRole => {
-//   let ROLE = await  getAsync(ASYNC_KEYS.USER_ROLE);
-//   ROLE && setRole(ROLE);
-// };
-
 const MainNavigator = (props) => {
   const [token, setToken,setRole] = useState();
    setAsyncToken(setToken);
-  // setAsyncRole(setRole);
     LoginStore.setTokenFunction(setToken);
     let getUserToken = LoginStore.userToken;
     let getRole = LoginStore.userRole;
@@ -46,44 +38,4 @@ const MainNavigator = (props) => {
   }
 };
 
-const RootRoutes = () => {
-    return (
-        <Stack.Screen 
-            options={{ headerShown: false }}
-            name={'MainNavigator'}
-            component={MainNavigator}
-        />
-    )
-}
-
 export default MainNavigator;
-
-const styles = StyleSheet.create({
-  tabBarImg: {
-    width: 20,
-    height: 20,
-  },
-  routeName: {
-    fontSize: 12,
-    marginTop: 5,
-  },
-  imageBack: {
-    height: 90,
-    width: 90,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  lottieImg: {
-    height: 65,
-    width: 65,
-  },
-  tabBarStyle: {
-    alignItems: "center",
-  },
-  tabBarFocused: {
-    backgroundColor: "#fdf3f3",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-});

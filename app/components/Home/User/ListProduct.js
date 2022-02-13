@@ -22,7 +22,6 @@ class ListProduct extends Component {
   @observable countItem = 2;
   constructor(props) {
     super(props);
-    // this.params = this.props.route.params.labelname;
     this.state = {
       ITEM_DATA: null,
 
@@ -66,7 +65,7 @@ class ListProduct extends Component {
   };
 
   header = () => {
-    if (this.props.route.params.type == "manager") {
+    if (this.props.route.params.type === "manager") {
       return (
         <View style={[styles.header, styles.shadow]}>
           <TouchableOpacity
@@ -156,8 +155,8 @@ class ListProduct extends Component {
           style={styles.card}
           onPress={() => this.onPressProduct(item)}
         >
-          <View style={{flex: 1}}>
-            <View style={{flex: 0.3}}>
+          <View style={styles.dateViewStyle1}>
+            <View style={{flex: 0.4}}>
               <View style={styles.textView}>
                 <Text style={styles.productName}>{item.name}</Text>
               </View>
@@ -271,18 +270,18 @@ class ListProduct extends Component {
 
   render() {
 
-    if (this.props.route.params.type == "Listlabel") {
+    if (this.props.route.params.type === "Listlabel") {
       return (
         <SafeAreaView style={styles.container}>
           {this.header()}
           <View style={styles.batchidNameView}>
             <Text style={styles.batchidName}>
               {"Batch ID:   "}
-              {this.props.route.params.batchid}
+              {this.props.route.params?.batchid}
             </Text>
             <Text style={styles.batchidName}>
               {"Label Name:   "}
-              {this.props.route.params.labelname}
+              {this.props.route.params?.labelname?.customername}
             </Text>
           </View>
           {this.machinelistView()}
@@ -394,22 +393,18 @@ const styles = StyleSheet.create({
     color: GlobalStyles.colorCodes.orange,
   },
   productName: {
-    marginTop: 7,
     fontSize: 13,
     color: GlobalStyles.colorCodes.black2,
   },
   imageView: {
-    // flexDirection: "row",
     flex: 0.4,
     flexWrap: "wrap",
   },
   textView: {
-    flex: 1,
-    marginLeft: 10,
   },
   sizeView: {
     flex: 0.3,
-    alignItems: "flex-end",
+    alignItems: "center",
   },
   dateViewStyle: {
     flexDirection: "row",

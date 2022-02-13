@@ -38,16 +38,6 @@ export default class HomeButtons extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  showCreateProduct = () => {
-    this.props.navigation.navigate(SCREENS.LISTUSER);
-  };
-  showListBatchid = () => {
-    this.props.navigation.navigate(SCREENS.MANAGERHOME);
-  };
-  showManagerLabelList = () => {
-    this.props.navigation.navigate(SCREENS.USERHOME);
-  };
   handleNaviagation = (activity) => {
      
     this.props.navigation.navigate(activity);
